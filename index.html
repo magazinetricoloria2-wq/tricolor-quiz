@@ -254,7 +254,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyDc7h-2v3swPvK3uKuy9wMJeR2PRZ5vEM4",
   authDomain: "tricolor-quiz.firebaseapp.com",
-  databaseURL: "https://tricolor-quiz-default-rtdb.firebaseio.com",
+  databaseURL: "https://tricolor-quiz-default-rtdb.firebaseio.com/",
   projectId: "tricolor-quiz",
   storageBucket: "tricolor-quiz.firebasestorage.app",
   messagingSenderId: "51048837463",
@@ -628,7 +628,7 @@ function speakQuestion(text){
   const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';u.rate=0.9;
   document.getElementById('speaking-indicator').style.display='flex';
   u.onend=()=>document.getElementById('speaking-indicator').style.display='none';
-  synth.speak(u);
+  synth.speak(u); 
 }
 function stopSpeech(){if(synth)synth.cancel();const el=document.getElementById('speaking-indicator');if(el)el.style.display='none';}
 
