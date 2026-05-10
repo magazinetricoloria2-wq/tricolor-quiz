@@ -6,118 +6,128 @@
 <title>Tricolor Quiz – Show do Milhão SPFC</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{--red:#CC0000;--red-dark:#990000;--red-light:#FF2222;--black:#111111;--black2:#1a1a1a;--white:#F5F5F5;--gold:#FFD700;--gray:#2a2a2a}
-  body{font-family:'Roboto',sans-serif;background:var(--black);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center}
-  .screen{display:none;width:100%;max-width:860px;padding:20px;animation:fadeIn 0.4s}
-  .screen.active{display:flex;flex-direction:column;align-items:center}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  .logo{display:flex;flex-direction:column;align-items:center;margin:30px 0 10px}
-  .logo-badge{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,var(--red) 60%,var(--red-dark) 100%);border:4px solid var(--white);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:var(--white);box-shadow:0 0 30px rgba(204,0,0,0.6)}
-  .logo h1{font-family:'Oswald',sans-serif;font-size:2.2rem;color:var(--white);margin-top:10px;letter-spacing:2px}
-  .logo p{color:#aaa;font-size:.85rem;letter-spacing:3px;text-transform:uppercase}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border-radius:6px;border:none;cursor:pointer;font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:1px;transition:all .2s;text-decoration:none}
-  .btn-primary{background:var(--red);color:white}
-  .btn-primary:hover{background:var(--red-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(204,0,0,.5)}
-  .btn-outline{background:transparent;color:var(--white);border:2px solid var(--white)}
-  .btn-outline:hover{background:rgba(255,255,255,.1)}
-  .btn-gold{background:var(--gold);color:var(--black)} 
-  .btn-gold:hover{background:#ffe033}
-  .btn-sm{padding:8px 16px;font-size:.85rem}
-  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
-  .card{background:var(--black2);border:1px solid #333;border-radius:12px;padding:24px;width:100%}
-  .card h2{font-family:'Oswald',sans-serif;font-size:1.4rem;color:var(--white);margin-bottom:16px}
-  .form-group{margin-bottom:16px;width:100%}
-  .form-group label{display:block;font-size:.8rem;color:#aaa;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
-  .form-group input{width:100%;padding:12px 16px;background:#222;border:1px solid #444;border-radius:8px;color:var(--white);font-size:1rem;outline:none;transition:border-color .2s}
-  .form-group input:focus{border-color:var(--red)}
-  .nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
-  .nav-btn{padding:8px 18px;border:1px solid #444;border-radius:20px;background:transparent;color:#aaa;cursor:pointer;font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:1px;transition:all .2s}
-  .nav-btn:hover,.nav-btn.active{background:var(--red);color:white;border-color:var(--red)}
-  .categories-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;width:100%}
-  .cat-card{background:var(--black2);border:2px solid #333;border-radius:12px;padding:20px 12px;cursor:pointer;text-align:center;transition:all .25s;position:relative;overflow:hidden}
-  .cat-card:hover{border-color:var(--red);transform:translateY(-4px);box-shadow:0 8px 25px rgba(204,0,0,.3)}
-  .cat-icon{font-size:2.5rem;margin-bottom:10px;display:block}
-  .cat-name{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--white)}
-  .cat-desc{font-size:.75rem;color:#888;margin-top:4px}
-  .difficulty-badge{position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:600}
-  .easy{background:#1a5c1a;color:#4caf50}.medium{background:#5c4a00;color:#ffd700}.hard{background:#5c0000;color:#ff6b6b}
-  .prize-ladder{display:flex;flex-direction:column-reverse;gap:4px;width:200px;background:var(--black2);border:1px solid #333;border-radius:10px;padding:10px;max-height:420px;overflow-y:auto}
-  .prize-item{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;border-radius:6px;font-size:.8rem;color:#888;transition:all .3s}
-  .prize-item.current{background:var(--red);color:white;font-weight:600}
-  .prize-item.reached{color:var(--gold)}
-  .prize-num{font-family:'Oswald',sans-serif;font-size:.75rem}
-  .quiz-main{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}
-  .question-card{background:var(--black2);border:2px solid #333;border-radius:14px;padding:24px}
-  .question-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-  .q-category{font-size:.75rem;color:var(--red);letter-spacing:2px;text-transform:uppercase}
-  .q-number{font-size:.75rem;color:#666}
-  .question-text{font-size:1.15rem;line-height:1.6;color:var(--white)}
-  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .option-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #444;border-radius:10px;background:var(--black2);color:var(--white);cursor:pointer;font-size:.95rem;text-align:left;transition:all .2s;width:100%}
-  .option-btn:hover:not(:disabled){border-color:var(--red);background:rgba(204,0,0,.1)}
-  .opt-letter{width:28px;height:28px;border-radius:50%;border:2px solid #666;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.85rem;flex-shrink:0;transition:all .2s}
-  .option-btn:hover:not(:disabled) .opt-letter{border-color:var(--red);color:var(--red)}
-  .option-btn.selected{border-color:var(--gold);background:rgba(255,215,0,.1)}
-  .option-btn.selected .opt-letter{border-color:var(--gold);color:var(--gold)}
-  .option-btn.correct{border-color:#4caf50;background:rgba(76,175,80,.15)}
-  .option-btn.correct .opt-letter{border-color:#4caf50;color:#4caf50}
-  .option-btn.wrong{border-color:#f44336;background:rgba(244,67,54,.15)}
-  .option-btn.wrong .opt-letter{border-color:#f44336;color:#f44336}
-  .option-btn.eliminated{opacity:.2;pointer-events:none}
-  .lifelines{display:flex;gap:10px;flex-wrap:wrap}
-  .lifeline-btn{padding:8px 14px;border:1px solid #555;border-radius:8px;background:#222;color:#ccc;cursor:pointer;font-size:.8rem;display:flex;align-items:center;gap:6px;transition:all .2s;font-family:'Oswald',sans-serif;letter-spacing:1px}
-  .lifeline-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
-  .lifeline-btn:disabled{opacity:.3;cursor:not-allowed}
-  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;display:flex;align-items:center;justify-content:center;animation:fadeIn .3s}
-  .confirm-box{background:var(--black2);border:2px solid var(--red);border-radius:16px;padding:32px;text-align:center;max-width:380px;width:90%}
-  .confirm-box h3{font-family:'Oswald',sans-serif;font-size:1.4rem;margin-bottom:8px}
-  .confirm-box p{color:#aaa;margin-bottom:24px}
-  .ranking-list{width:100%}
-  .rank-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #222;transition:background .2s}
-  .rank-item:hover{background:rgba(255,255,255,.03)}
-  .rank-pos{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.85rem;font-weight:700;flex-shrink:0}
-  .rp-gold{background:#ffd700;color:#000}.rp-silver{background:#c0c0c0;color:#000}.rp-bronze{background:#cd7f32;color:#fff}.rp-other{background:#333;color:#aaa}
-  .rank-name{flex:1;font-weight:500}
-  .rank-score{font-family:'Oswald',sans-serif;color:var(--gold);font-size:1rem}
-  .rank-cat{font-size:.75rem;color:#666}
-  .result-score{font-family:'Oswald',sans-serif;font-size:3.5rem;color:var(--gold);text-align:center;text-shadow:0 0 30px rgba(255,215,0,.5)}
-  .result-msg{text-align:center;color:#aaa;margin:8px 0 24px}
-  .status-bar{background:var(--red);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;width:100%;max-width:860px;border-radius:8px;margin-bottom:8px}
-  .user-info{font-size:.9rem}
-  .user-info strong{font-family:'Oswald',sans-serif}
-  .divider{display:flex;align-items:center;gap:12px;color:#555;font-size:.8rem;width:100%;margin:12px 0}
-  .divider::before,.divider::after{content:'';flex:1;height:1px;background:#333}
-  .ai-bubble{background:#1a2a1a;border:1px solid #2a4a2a;border-radius:10px;padding:14px 18px;font-size:.9rem;color:#ccc;line-height:1.6;margin-top:10px}
-  .quiz-layout{display:flex;gap:16px;width:100%;align-items:flex-start}
-  .speaking-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1s infinite}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
-  .trophy{font-size:5rem;text-align:center;display:block}
-  .section-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:2px;color:#aaa;text-transform:uppercase;margin-bottom:12px}
-  .fb-status{font-size:.75rem;padding:3px 10px;border-radius:10px;font-weight:600}
-  .fb-ok{background:#1a5c1a;color:#4caf50}.fb-err{background:#5c0000;color:#ff6b6b}.fb-loading{background:#333;color:#aaa}
-  @media(max-width:600px){.quiz-layout{flex-direction:column}.prize-ladder{display:none}.options-grid{grid-template-columns:1fr}}
-  .mt-2{margin-top:8px}.mt-4{margin-top:16px}.mb-2{margin-bottom:8px}.gap-2{gap:8px}.flex{display:flex}.items-center{align-items:center}.justify-center{justify-content:center}.w-full{width:100%}.text-center{text-align:center}.text-sm{font-size:.85rem}.text-muted{color:#888}.text-red{color:var(--red)}.text-gold{color:var(--gold)}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#CC0000;--red-dark:#990000;--red-light:#FF2222;--black:#111111;--black2:#1a1a1a;--white:#F5F5F5;--gold:#FFD700}
+body{font-family:'Roboto',sans-serif;background:var(--black);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.screen{display:none;width:100%;max-width:860px;padding:20px;animation:fadeIn 0.4s}
+.screen.active{display:flex;flex-direction:column;align-items:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.logo{display:flex;flex-direction:column;align-items:center;margin:24px 0 10px}
+.logo-shield{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(204,0,0,0.7));transition:transform .3s}
+.logo-shield:hover{transform:scale(1.05)}
+.logo-shield-fallback{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,var(--red) 60%,var(--red-dark) 100%);border:4px solid var(--white);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:var(--white);box-shadow:0 0 30px rgba(204,0,0,.6)}
+.logo h1{font-family:'Oswald',sans-serif;font-size:2.2rem;color:var(--white);margin-top:10px;letter-spacing:2px}
+.logo p{color:#aaa;font-size:.85rem;letter-spacing:3px;text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border-radius:6px;border:none;cursor:pointer;font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:1px;transition:all .2s}
+.btn-primary{background:var(--red);color:white}.btn-primary:hover{background:var(--red-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(204,0,0,.5)}
+.btn-outline{background:transparent;color:var(--white);border:2px solid var(--white)}.btn-outline:hover{background:rgba(255,255,255,.1)}
+.btn-gold{background:var(--gold);color:var(--black)}.btn-gold:hover{background:#ffe033}
+.btn-sm{padding:8px 16px;font-size:.85rem}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.card{background:var(--black2);border:1px solid #333;border-radius:12px;padding:24px;width:100%}
+.card h2{font-family:'Oswald',sans-serif;font-size:1.4rem;color:var(--white);margin-bottom:16px}
+.form-group{margin-bottom:16px;width:100%}
+.form-group label{display:block;font-size:.8rem;color:#aaa;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+.form-group input{width:100%;padding:12px 16px;background:#222;border:1px solid #444;border-radius:8px;color:var(--white);font-size:1rem;outline:none;transition:border-color .2s}
+.form-group input:focus{border-color:var(--red)}
+.nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.nav-btn{padding:8px 18px;border:1px solid #444;border-radius:20px;background:transparent;color:#aaa;cursor:pointer;font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:1px;transition:all .2s}
+.nav-btn:hover,.nav-btn.active{background:var(--red);color:white;border-color:var(--red)}
+.categories-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;width:100%}
+.cat-card{background:var(--black2);border:2px solid #333;border-radius:12px;padding:20px 12px;cursor:pointer;text-align:center;transition:all .25s;position:relative;overflow:hidden}
+.cat-card:hover{border-color:var(--red);transform:translateY(-4px);box-shadow:0 8px 25px rgba(204,0,0,.3)}
+.cat-icon{font-size:2.4rem;margin-bottom:10px;display:block}
+.cat-name{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--white)}
+.cat-desc{font-size:.75rem;color:#888;margin-top:4px}
+.difficulty-badge{position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:600}
+.easy{background:#1a5c1a;color:#4caf50}.medium{background:#5c4a00;color:#ffd700}.hard{background:#5c0000;color:#ff6b6b}
+.prize-ladder{display:flex;flex-direction:column-reverse;gap:4px;width:195px;background:var(--black2);border:1px solid #333;border-radius:10px;padding:10px;max-height:430px;overflow-y:auto}
+.prize-item{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;border-radius:6px;font-size:.78rem;color:#888;transition:all .3s}
+.prize-item.current{background:var(--red);color:white;font-weight:600}
+.prize-item.reached{color:var(--gold)}
+.prize-num{font-family:'Oswald',sans-serif;font-size:.73rem}
+.quiz-layout{display:flex;gap:16px;width:100%;align-items:flex-start}
+.quiz-main{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}
+.question-card{background:var(--black2);border:2px solid #333;border-radius:14px;padding:24px}
+.question-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.q-category{font-size:.75rem;color:var(--red);letter-spacing:2px;text-transform:uppercase}
+.q-number{font-size:.75rem;color:#666}
+.question-text{font-size:1.12rem;line-height:1.65;color:var(--white)}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #444;border-radius:10px;background:var(--black2);color:var(--white);cursor:pointer;font-size:.93rem;text-align:left;transition:all .2s;width:100%}
+.option-btn:hover:not(:disabled){border-color:var(--red);background:rgba(204,0,0,.1)}
+.opt-letter{width:28px;height:28px;border-radius:50%;border:2px solid #666;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.83rem;flex-shrink:0;transition:all .2s}
+.option-btn:hover:not(:disabled) .opt-letter{border-color:var(--red);color:var(--red)}
+.option-btn.selected{border-color:var(--gold);background:rgba(255,215,0,.1)}
+.option-btn.selected .opt-letter{border-color:var(--gold);color:var(--gold)}
+.option-btn.correct{border-color:#4caf50;background:rgba(76,175,80,.15)}
+.option-btn.correct .opt-letter{border-color:#4caf50;color:#4caf50}
+.option-btn.wrong{border-color:#f44336;background:rgba(244,67,54,.15)}
+.option-btn.wrong .opt-letter{border-color:#f44336;color:#f44336}
+.option-btn.eliminated{opacity:.2;pointer-events:none}
+.lifelines{display:flex;gap:8px;flex-wrap:wrap}
+.lifeline-btn{padding:8px 13px;border:1px solid #555;border-radius:8px;background:#222;color:#ccc;cursor:pointer;font-size:.78rem;display:flex;align-items:center;gap:5px;transition:all .2s;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.lifeline-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.lifeline-btn:disabled{opacity:.3;cursor:not-allowed}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;display:flex;align-items:center;justify-content:center;animation:fadeIn .3s}
+.confirm-box{background:var(--black2);border:2px solid var(--red);border-radius:16px;padding:32px;text-align:center;max-width:380px;width:90%}
+.confirm-box h3{font-family:'Oswald',sans-serif;font-size:1.4rem;margin-bottom:8px}
+.confirm-box p{color:#aaa;margin-bottom:24px}
+.ranking-list{width:100%}
+.rank-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #222;transition:background .2s}
+.rank-item:hover{background:rgba(255,255,255,.03)}
+.rank-pos{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.85rem;font-weight:700;flex-shrink:0}
+.rp-gold{background:#ffd700;color:#000}.rp-silver{background:#c0c0c0;color:#000}.rp-bronze{background:#cd7f32;color:#fff}.rp-other{background:#333;color:#aaa}
+.rank-name{flex:1;font-weight:500}
+.rank-score{font-family:'Oswald',sans-serif;color:var(--gold);font-size:1rem}
+.rank-cat{font-size:.75rem;color:#666}
+.result-score{font-family:'Oswald',sans-serif;font-size:3.5rem;color:var(--gold);text-align:center;text-shadow:0 0 30px rgba(255,215,0,.5)}
+.result-msg{text-align:center;color:#aaa;margin:8px 0 24px}
+.status-bar{background:var(--red);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;width:100%;max-width:860px;border-radius:8px;margin-bottom:8px}
+.user-info{font-size:.9rem}.user-info strong{font-family:'Oswald',sans-serif}
+.divider{display:flex;align-items:center;gap:12px;color:#555;font-size:.8rem;width:100%;margin:12px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#333}
+.ai-bubble{background:#1a2a1a;border:1px solid #2a4a2a;border-radius:10px;padding:14px 18px;font-size:.9rem;color:#ccc;line-height:1.6;margin-top:10px}
+.speaking-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+.trophy{font-size:5rem;text-align:center;display:block}
+.section-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:2px;color:#aaa;text-transform:uppercase;margin-bottom:12px}
+.fb-status{font-size:.75rem;padding:3px 10px;border-radius:10px;font-weight:600}
+.fb-ok{background:#1a5c1a;color:#4caf50}.fb-err{background:#5c0000;color:#ff6b6b}.fb-loading{background:#333;color:#aaa}
+.music-ctrl{position:fixed;bottom:16px;right:16px;z-index:50;display:flex;align-items:center;gap:8px;background:rgba(20,20,20,.96);border:1px solid #333;border-radius:30px;padding:7px 14px;backdrop-filter:blur(6px)}
+.music-ctrl span{font-size:.72rem;color:#aaa;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.music-btn{background:none;border:none;cursor:pointer;font-size:1.15rem;padding:0;line-height:1}
+@media(max-width:600px){.quiz-layout{flex-direction:column}.prize-ladder{display:none}.options-grid{grid-template-columns:1fr}}
+.mt-2{margin-top:8px}.mt-4{margin-top:16px}.mb-2{margin-bottom:8px}.gap-2{gap:8px}.flex{display:flex}.items-center{align-items:center}.justify-center{justify-content:center}.w-full{width:100%}.text-center{text-align:center}.text-sm{font-size:.85rem}.text-muted{color:#888}.text-red{color:var(--red)}.text-gold{color:var(--gold)}
 </style>
 </head>
 <body>
 
+<div class="music-ctrl" id="music-ctrl" style="display:none">
+  <button class="music-btn" id="music-btn" onclick="toggleMusic()">🔇</button>
+  <span id="music-label">MÚSICA</span>
+</div>
+
 <!-- WELCOME -->
 <div id="screen-welcome" class="screen active">
   <div class="logo">
-    <div class="logo-badge">SPFC</div>
+    <img class="logo-shield" id="shield-welcome"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Coat_of_arms_of_the_S%C3%A3o_Paulo_FC.svg/240px-Coat_of_arms_of_the_S%C3%A3o_Paulo_FC.svg.png"
+      alt="Escudo SPFC"
+      onerror="this.style.display='none';document.getElementById('shield-fb').style.display='flex'">
+    <div class="logo-shield-fallback" id="shield-fb" style="display:none">SPFC</div>
     <h1>TRICOLOR QUIZ</h1>
     <p>Show do Milhão</p>
   </div>
-  <div style="width:100%;max-width:400px;margin-top:20px">
+  <div style="width:100%;max-width:400px;margin-top:16px">
     <div style="display:flex;justify-content:center;margin-bottom:12px">
-      <span id="fb-status-badge" class="fb-status fb-loading">⏳ conectando ao Firebase...</span>
+      <span id="fb-badge" class="fb-status fb-loading">⏳ conectando...</span>
     </div>
     <div class="card" style="margin-bottom:16px">
       <h2 style="text-align:center;margin-bottom:20px">Bem-vindo, Torcedor!</h2>
       <div id="welcome-form">
         <div class="form-group"><label>Nome de usuário</label><input type="text" id="username-input" placeholder="Seu apelido no estádio..."/></div>
-        <div class="form-group"><label>Senha</label><input type="password" id="password-input" placeholder="••••••••"/></div>
+        <div class="form-group"><label>Senha</label><input type="password" id="password-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
         <button class="btn btn-primary w-full mt-2" onclick="doLogin()">ENTRAR</button>
         <div class="divider">ou</div>
         <button class="btn btn-outline w-full" onclick="showRegister()">CRIAR CONTA</button>
@@ -125,7 +135,7 @@
       <div id="register-form" style="display:none">
         <div class="form-group"><label>Nome de usuário</label><input type="text" id="reg-username" placeholder="Como quer ser chamado?"/></div>
         <div class="form-group"><label>Senha</label><input type="password" id="reg-password" placeholder="••••••••"/></div>
-        <div class="form-group"><label>Confirmar senha</label><input type="password" id="reg-confirm" placeholder="••••••••"/></div>
+        <div class="form-group"><label>Confirmar senha</label><input type="password" id="reg-confirm" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()"/></div>
         <button class="btn btn-primary w-full mt-2" onclick="doRegister()">CRIAR CONTA</button>
         <div class="divider">ou</div>
         <button class="btn btn-outline w-full" onclick="showLogin()">JÁ TENHO CONTA</button>
@@ -144,7 +154,12 @@
       <button class="btn btn-sm btn-outline" onclick="doLogout()">SAIR</button>
     </div>
   </div>
-  <div class="logo" style="margin:10px 0"><div class="logo-badge">SPFC</div><h1>TRICOLOR QUIZ</h1></div>
+  <div class="logo" style="margin:10px 0">
+    <img class="logo-shield" style="width:70px;height:70px"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Coat_of_arms_of_the_S%C3%A3o_Paulo_FC.svg/240px-Coat_of_arms_of_the_S%C3%A3o_Paulo_FC.svg.png"
+      alt="Escudo SPFC" onerror="this.style.display='none'">
+    <h1>TRICOLOR QUIZ</h1>
+  </div>
   <div class="nav">
     <button class="nav-btn active" id="nav-jogar" onclick="showTab('jogar',this)">🏟️ JOGAR</button>
     <button class="nav-btn" id="nav-ranking" onclick="showTab('ranking',this)">🏆 RANKING GLOBAL</button>
@@ -169,15 +184,13 @@
       <p class="section-title" style="margin:0">🌎 Top 10 Global</p>
       <button class="btn btn-sm btn-outline" onclick="loadRanking()">↻ Atualizar</button>
     </div>
-    <div class="card">
-      <div id="ranking-list" class="ranking-list"><p class="text-center text-muted">Carregando...</p></div>
-    </div>
-    <p class="text-center text-sm text-muted mt-4" style="margin-top:12px">Ranking em tempo real via Firebase · qualquer dispositivo, em qualquer lugar</p>
+    <div class="card"><div id="ranking-list" class="ranking-list"><p class="text-center text-muted">Carregando...</p></div></div>
+    <p class="text-center text-sm text-muted" style="margin-top:12px">Ranking em tempo real via Firebase — qualquer dispositivo no mundo</p>
   </div>
   <div id="tab-sobre" class="w-full" style="display:none">
     <div class="card">
       <h2>Sobre o Tricolor Quiz</h2>
-      <p class="text-sm text-muted" style="line-height:1.8">O <strong style="color:var(--white)">Tricolor Quiz</strong> é um jogo de perguntas e respostas inspirado no Show do Milhão, com todas as questões sobre o <strong style="color:var(--red)">São Paulo Futebol Clube</strong>.<br><br>Mais de <strong style="color:var(--white)">100 perguntas</strong> em 5 categorias. 3 ajudas: <strong style="color:var(--white)">Pulo</strong>, <strong style="color:var(--white)">Eliminar resposta</strong> e <strong style="color:var(--white)">Ajuda da IA</strong>.<br><br>Ranking global em tempo real via Firebase — qualquer pessoa no mundo entra no mesmo top 10!<br><br><span class="text-red">🔴⚫⚪ Somos o São Paulo, o maior do Brasil!</span></p>
+      <p class="text-sm text-muted" style="line-height:1.8">O <strong style="color:var(--white)">Tricolor Quiz</strong> é um jogo inspirado no Show do Milhão com questões sobre o <strong style="color:var(--red)">São Paulo Futebol Clube</strong>.<br><br>Mais de <strong style="color:var(--white)">100 perguntas</strong> em 5 categorias. Ajudas disponíveis: <strong style="color:var(--white)">Pular</strong>, <strong style="color:var(--white)">Eliminar resposta</strong> e <strong style="color:var(--white)">Ajuda da IA</strong>.<br><br>Ranking global em tempo real via Firebase!<br><br><span class="text-red">🔴⚫⚪ Somos o São Paulo, o maior do Brasil!</span></p>
     </div>
   </div>
 </div>
@@ -186,7 +199,7 @@
 <div id="screen-quiz" class="screen">
   <div class="status-bar" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:8px">
-      <span id="quiz-category-label" class="text-sm text-muted"></span>
+      <span id="quiz-cat-label" class="text-sm text-muted"></span>
       <span id="speaking-indicator" style="display:none"><span class="speaking-dot"></span> lendo...</span>
     </div>
     <button class="btn btn-sm btn-outline" onclick="quitQuiz()">✕ SAIR</button>
@@ -202,27 +215,31 @@
       </div>
       <div class="question-card">
         <div class="question-meta">
-          <span id="q-category-text" class="q-category"></span>
-          <span id="q-number-text" class="q-number"></span>
+          <span id="q-cat" class="q-category"></span>
+          <span id="q-num" class="q-number"></span>
         </div>
-        <p id="question-text" class="question-text"></p>
+        <p id="q-text" class="question-text"></p>
       </div>
-      <div class="options-grid" id="options-grid"></div>
-      <div id="ai-help-box" class="ai-bubble" style="display:none"></div>
+      <div class="options-grid" id="opts-grid"></div>
+      <div id="ai-box" class="ai-bubble" style="display:none"></div>
     </div>
   </div>
 </div>
 
 <!-- RESULT -->
 <div id="screen-result" class="screen">
-  <div class="logo" style="margin:20px 0 10px"><div class="logo-badge">SPFC</div></div>
-  <span id="result-trophy" class="trophy">🏆</span>
-  <div class="result-score" id="result-score">0</div>
-  <p class="result-msg" id="result-msg"></p>
+  <div class="logo" style="margin:20px 0 10px">
+    <img class="logo-shield" style="width:70px;height:70px"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Coat_of_arms_of_the_S%C3%A3o_Paulo_FC.svg/240px-Coat_of_arms_of_the_S%C3%A3o_Paulo_FC.svg.png"
+      alt="Escudo SPFC" onerror="this.style.display='none'">
+  </div>
+  <span id="res-trophy" class="trophy">🏆</span>
+  <div class="result-score" id="res-score">0</div>
+  <p class="result-msg" id="res-msg"></p>
   <div class="card w-full" style="max-width:420px;text-align:center;margin-bottom:16px">
-    <p class="text-sm text-muted mb-2">Respostas corretas: <strong id="result-correct" style="color:var(--white)">0</strong></p>
-    <p class="text-sm text-muted mb-2">Total acumulado: <strong id="result-total" style="color:var(--gold)">0</strong> pts</p>
-    <p class="text-sm text-muted">Posição no ranking global: <strong id="result-rank" style="color:var(--gold)">—</strong></p>
+    <p class="text-sm text-muted mb-2">Respostas corretas: <strong id="res-correct" style="color:var(--white)">0</strong></p>
+    <p class="text-sm text-muted mb-2">Total acumulado: <strong id="res-total" style="color:var(--gold)">0</strong> pts</p>
+    <p class="text-sm text-muted">Posição no ranking global: <strong id="res-rank" style="color:var(--gold)">—</strong></p>
   </div>
   <div class="flex gap-2">
     <button class="btn btn-outline" onclick="goHome()">🏠 INÍCIO</button>
@@ -230,12 +247,12 @@
   </div>
 </div>
 
-<!-- CONFIRM OVERLAY -->
+<!-- CONFIRM -->
 <div id="confirm-overlay" class="confirm-overlay" style="display:none">
   <div class="confirm-box">
     <h3>⚠️ Tem certeza disso?</h3>
-    <p id="confirm-answer-text" style="margin-bottom:12px;font-size:1.1rem;color:var(--white)"></p>
-    <p>Pense bem antes de confirmar sua resposta!</p>
+    <p id="confirm-txt" style="margin-bottom:12px;font-size:1.1rem;color:var(--white)"></p>
+    <p>Pense bem antes de confirmar!</p>
     <div class="flex gap-2 justify-center mt-4">
       <button class="btn btn-outline" onclick="cancelConfirm()">↩️ MUDAR</button>
       <button class="btn btn-primary" onclick="finalConfirm()">✔️ TENHO CERTEZA</button>
@@ -243,410 +260,358 @@
   </div>
 </div>
 
-<!-- FIREBASE SDK (módulos UMD compatíveis) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
 <script>
-// ═══════════════════════════════════════════════
-// FIREBASE CONFIG
-// ═══════════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyDc7h-2v3swPvK3uKuy9wMJeR2PRZ5vEM4",
-  authDomain: "tricolor-quiz.firebaseapp.com",
-  databaseURL: "https://tricolor-quiz-default-rtdb.firebaseio.com/",
-  projectId: "tricolor-quiz",
-  storageBucket: "tricolor-quiz.firebasestorage.app",
-  messagingSenderId: "51048837463",
-  appId: "1:51048837463:web:b71e99ba07f9bc54880e12"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// Teste de conexão
-db.ref('.info/connected').on('value', snap => {
-  const el = document.getElementById('fb-status-badge');
-  if (snap.val()) {
-    el.className = 'fb-status fb-ok';
-    el.textContent = '🟢 Firebase conectado';
-  } else {
-    el.className = 'fb-status fb-err';
-    el.textContent = '🔴 Sem conexão';
-  }
+// ── FIREBASE ──────────────────────────────────────────────────
+firebase.initializeApp({apiKey:"AIzaSyDc7h-2v3swPvK3uKuy9wMJeR2PRZ5vEM4",authDomain:"tricolor-quiz.firebaseapp.com",databaseURL:"https://tricolor-quiz-default-rtdb.firebaseio.com",projectId:"tricolor-quiz",storageBucket:"tricolor-quiz.firebasestorage.app",messagingSenderId:"51048837463",appId:"1:51048837463:web:b71e99ba07f9bc54880e12"});
+const db=firebase.database();
+db.ref('.info/connected').on('value',s=>{
+  const el=document.getElementById('fb-badge');
+  if(s.val()){el.className='fb-status fb-ok';el.textContent='🟢 Firebase conectado';}
+  else{el.className='fb-status fb-err';el.textContent='🔴 Sem conexão';}
 });
+const fbUser=n=>db.ref('users/'+n).once('value').then(s=>s.val());
+const fbSaveUser=(n,d)=>db.ref('users/'+n).set(d);
+const fbAddScore=e=>db.ref('ranking').push(e);
+async function fbRanking(){const s=await db.ref('ranking').orderByChild('score').limitToLast(10).once('value');const r=[];s.forEach(c=>r.push(c.val()));return r.reverse();}
+async function fbRankPos(score){const s=await db.ref('ranking').orderByChild('score').startAt(score+1).once('value');let n=0;s.forEach(()=>n++);return n+1;}
 
-// ═══════════════════════════════════════════════
-// FIREBASE: USUÁRIOS & RANKING
-// ═══════════════════════════════════════════════
-async function fbGetUser(name) {
-  const snap = await db.ref('users/' + name).once('value');
-  return snap.val();
-}
-async function fbSaveUser(name, data) {
-  await db.ref('users/' + name).set(data);
-}
-async function fbGetRanking() {
-  const snap = await db.ref('ranking').orderByChild('score').limitToLast(10).once('value');
-  const rows = [];
-  snap.forEach(c => rows.push(c.val()));
-  return rows.reverse();
-}
-async function fbAddScore(entry) {
-  await db.ref('ranking').push(entry);
-}
-async function fbGetRankPosition(score) {
-  const snap = await db.ref('ranking').orderByChild('score').once('value');
-  let total = 0, pos = 1;
-  snap.forEach(() => total++);
-  const snap2 = await db.ref('ranking').orderByChild('score').startAt(score + 1).once('value');
-  snap2.forEach(() => pos++);
-  return pos;
+// ── OST ENGINE ────────────────────────────────────────────────
+let actx=null,musicOn=false,masterGain=null,loopTimer=null,ostPhase=0;
+const NOTES=[[330,370,415,370,330,294,330,370],[370,415,466,415,370,330,370,415],[415,466,523,466,415,370,415,466]];
+const BPM=[100,116,132];
+
+function getCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();return actx;}
+
+function startOST(){
+  stopLoop();
+  if(!musicOn)return;
+  const ctx=getCtx();
+  if(masterGain){try{masterGain.disconnect();}catch{}}
+  masterGain=ctx.createGain();
+  masterGain.gain.value=0.15;
+  masterGain.connect(ctx.destination);
+  const mel=NOTES[ostPhase]||NOTES[0];
+  const beat=60/BPM[ostPhase];
+  let t=ctx.currentTime+0.05;
+  function sched(){
+    for(let i=0;i<8;i++){
+      // bass pulse
+      const ob=ctx.createOscillator(),gb=ctx.createGain();ob.connect(gb);gb.connect(masterGain);
+      ob.type='sine';ob.frequency.value=70+ostPhase*10;
+      const tb=t+i*beat;gb.gain.setValueAtTime(0.6,tb);gb.gain.exponentialRampToValueAtTime(0.001,tb+0.15);ob.start(tb);ob.stop(tb+0.18);
+      // melody
+      const om=ctx.createOscillator(),gm=ctx.createGain();om.connect(gm);gm.connect(masterGain);
+      om.type='triangle';om.frequency.value=mel[i];
+      const tm=t+i*beat+beat*0.5;gm.gain.setValueAtTime(0,tm);gm.gain.linearRampToValueAtTime(0.45,tm+0.02);gm.gain.exponentialRampToValueAtTime(0.001,tm+beat*0.42);om.start(tm);om.stop(tm+beat*0.45);
+    }
+    t+=8*beat;
+  }
+  sched();
+  loopTimer=setInterval(sched,(8*beat*1000)-60);
+  document.getElementById('music-btn').textContent='🔊';
 }
 
-// ═══════════════════════════════════════════════
-// PERGUNTAS
-// ═══════════════════════════════════════════════
-const QUESTIONS = {
-  historia: [
+function stopLoop(){if(loopTimer){clearInterval(loopTimer);loopTimer=null;}if(masterGain){try{masterGain.disconnect();}catch{}}masterGain=null;}
+
+function setPhase(p){if(p===ostPhase)return;ostPhase=p;if(musicOn)startOST();}
+
+function toggleMusic(){
+  musicOn=!musicOn;
+  if(musicOn){getCtx().resume();startOST();}
+  else{stopLoop();document.getElementById('music-btn').textContent='🔇';}
+}
+
+function playFanfare(){
+  stopLoop();
+  const ctx=getCtx(),g=ctx.createGain();g.connect(ctx.destination);
+  [523,659,784,1047].forEach((f,i)=>{const o=ctx.createOscillator();o.connect(g);o.type='sine';o.frequency.value=f;const t=ctx.currentTime+i*0.18;g.gain.setValueAtTime(0.28,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.32);o.start(t);o.stop(t+0.35);});
+  if(musicOn)setTimeout(startOST,950);
+}
+
+function playWrong(){
+  stopLoop();
+  const ctx=getCtx(),g=ctx.createGain();g.connect(ctx.destination);
+  [220,196,174].forEach((f,i)=>{const o=ctx.createOscillator();o.connect(g);o.type='sawtooth';o.frequency.value=f;const t=ctx.currentTime+i*0.22;g.gain.setValueAtTime(0.22,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.32);o.start(t);o.stop(t+0.35);});
+}
+
+// ── PERGUNTAS ─────────────────────────────────────────────────
+const Q={
+  historia:[
     {q:"Em que ano foi fundado o São Paulo Futebol Clube?",opts:["1930","1931","1935","1942"],ans:1},
-    {q:"Qual o nome do principal sócio fundador do São Paulo FC?",opts:["Antônio Casapicola","Paulo Machado de Carvalho","Laudo Natel","Rubens Arruda"],ans:2},
-    {q:"Qual foi o primeiro grande título nacional do São Paulo?",opts:["Libertadores 1992","Brasileiro 1977","Copa do Brasil 1992","Paulistão 1931"],ans:2},
+    {q:"Qual o principal sócio fundador do São Paulo FC?",opts:["Antônio Casapicola","Paulo Machado de Carvalho","Laudo Natel","Rubens Arruda"],ans:0},
+    {q:"Qual foi o primeiro grande título nacional do São Paulo?",opts:["Libertadores 1992","Brasileiro 1977","Copa do Brasil 1992","Paulistão 1931"],ans:1},
     {q:"Quantas vezes o SPFC foi campeão mundial?",opts:["1","2","3","4"],ans:2},
-    {q:"Qual foi o treinador do SPFC nas três Libertadores consecutivas (1992–94)?",opts:["Muricy Ramalho","Telê Santana","Vanderlei Luxemburgo","Emerson Leão"],ans:1},
-    {q:"Em que ano o SPFC conquistou seu primeiro título da Libertadores?",opts:["1990","1991","1992","1993"],ans:2},
-    {q:"Qual rival histórico do SPFC é chamado de 'clássico da saudade'?",opts:["Corinthians","Palmeiras","Santos","Portuguesa"],ans:3},
+    {q:"Qual treinador dirigiu o SPFC nas três Libertadores (1992–94)?",opts:["Muricy Ramalho","Telê Santana","Vanderlei Luxemburgo","Emerson Leão"],ans:1},
+    {q:"Em que ano o SPFC conquistou sua primeira Libertadores?",opts:["1990","1991","1992","1993"],ans:2},
+    {q:"Qual rival é chamado de 'clássico da saudade'?",opts:["Corinthians","Palmeiras","Santos","Portuguesa"],ans:3},
     {q:"Quem é o maior artilheiro da história do São Paulo FC?",opts:["Leônidas","Luizinho","Serginho Chulapa","Telê"],ans:2},
     {q:"Como é popularmente chamado o São Paulo FC?",opts:["Tricolor do Morumbi","Rubronegro","Soberano","Majestoso"],ans:0},
-    {q:"Em qual cidade fica o CT (Centro de Treinamento) do São Paulo?",opts:["Guarulhos","São Bernardo","São Paulo","Osasco"],ans:2}
+    {q:"O SPFC foi campeão brasileiro invicto em qual ano?",opts:["1977","1986","1992","2006"],ans:3}
   ],
-  craques: [
-    {q:"Kaká foi revelado pelas categorias de base de qual clube?",opts:["Palmeiras","Santos","São Paulo FC","Corinthians"],ans:2},
+  craques:[
+    {q:"Kaká foi revelado nas categorias de base de qual clube?",opts:["Palmeiras","Santos","São Paulo FC","Corinthians"],ans:2},
     {q:"Qual ex-jogador do SPFC ganhou a Bola de Ouro em 2007?",opts:["Luís Fabiano","Kaká","Rogério Ceni","Souza"],ans:1},
     {q:"Rogério Ceni é recordista mundial de gols em qual posição?",opts:["Centroavante","Meia","Goleiro","Lateral"],ans:2},
     {q:"Quantos gols Rogério Ceni marcou na carreira?",opts:["Mais de 100","Mais de 120","Mais de 131","Mais de 150"],ans:2},
     {q:"Qual atacante argentino reforçou o SPFC nos anos 90?",opts:["Batistuta","Balbo","Caniggia","Ortega"],ans:1},
     {q:"Qual zagueiro do SPFC foi campeão com a Seleção em 2002?",opts:["Alex","Lugano","Edmar","Gamarra"],ans:0},
     {q:"Quem foi o goleiro titular do SPFC no Mundial de 2005?",opts:["Ceni","Gilmar","Marcos","Fábio"],ans:0},
-    {q:"Qual atacante do SPFC foi artilheiro do Mundial de Clubes de 2005?",opts:["Luís Fabiano","Amoroso","Grafite","Leandro"],ans:0},
-    {q:"Daniel Alves defendeu o São Paulo antes de ir ao Sevilla?",opts:["Verdade","Mito — foi direto","Mito — passou pelo Santos","Mito — veio da Europa"],ans:0},
+    {q:"Qual atacante foi artilheiro do Mundial de Clubes 2005?",opts:["Luís Fabiano","Amoroso","Grafite","Leandro"],ans:0},
+    {q:"Daniel Alves defendeu o São Paulo antes de ir ao Sevilla?",opts:["Verdade","Mito — foi direto","Mito — pelo Santos","Mito — veio da Europa"],ans:0},
     {q:"Qual jogador ficou conhecido como 'Fenômeno' e jogou no SPFC?",opts:["Ronaldinho","Ronaldo Fenômeno","Kaká","Maradona"],ans:1}
   ],
-  estadio: [
+  estadio:[
     {q:"Qual é o nome oficial do estádio do São Paulo FC?",opts:["Estádio Cícero Pompeu de Toledo","Estádio do Morumbi","Arena São Paulo","Estádio Raulino de Oliveira"],ans:0},
     {q:"Qual a capacidade aproximada do Morumbi?",opts:["40.000","50.000","67.000","80.000"],ans:2},
     {q:"Em que ano foi inaugurado o Morumbi?",opts:["1952","1960","1970","1980"],ans:1},
     {q:"Qual bairro de São Paulo abriga o Morumbi?",opts:["Lapa","Pinheiros","Morumbi","Interlagos"],ans:2},
-    {q:"Como é chamado o estádio ligado ao SPFC construído para a Copa de 2014?",opts:["Neo Química Arena","MorumBIS","Arena Corinthians","Allianz Parque"],ans:1},
+    {q:"Como é chamado o estádio do SPFC relacionado à Copa de 2014?",opts:["Neo Química Arena","MorumBIS","Arena Corinthians","Allianz Parque"],ans:1},
     {q:"O Morumbi já foi sede de jogos da Seleção Brasileira?",opts:["Nunca","Raramente","Sim, muitas vezes","Apenas uma vez"],ans:2},
-    {q:"Como é chamado o setor da torcida mais fanática do SPFC no Morumbi?",opts:["Gol Norte","Mancha Verde","Norte","Independente"],ans:2},
+    {q:"Como é chamado o setor da torcida mais fanática no Morumbi?",opts:["Gol Norte","Mancha Verde","Norte","Independente"],ans:2},
     {q:"Qual o nome da maior torcida organizada do São Paulo FC?",opts:["Gaviões da Fiel","Mancha Alvi Verde","Independente","Torcida Tricolor"],ans:2},
-    {q:"Onde fica o CT (Centro de Treinamento) do São Paulo FC?",opts:["Cotia","Barra Funda","Alphaville","Santo André"],ans:1},
+    {q:"Onde fica o CT do São Paulo FC?",opts:["Cotia","Barra Funda","Alphaville","Santo André"],ans:1},
     {q:"O Morumbi já recebeu finais de Copa Libertadores?",opts:["Sim","Não","Apenas semifinais","Somente Copa do Brasil"],ans:0}
   ],
-  titulos: [
+  titulos:[
     {q:"Quantos títulos brasileiros (Série A) o São Paulo FC possui?",opts:["4","5","6","7"],ans:2},
     {q:"Em que anos o SPFC conquistou o tri da Libertadores?",opts:["1990, 91, 92","1992, 93, 94","1993, 94, 95","1994, 95, 96"],ans:1},
     {q:"Quantas vezes o São Paulo ganhou o Paulistão?",opts:["Mais de 10","Mais de 15","Mais de 20","Mais de 22"],ans:3},
     {q:"Contra quem o SPFC jogou a final do Mundial de 2005?",opts:["Barcelona","Chelsea","Liverpool","Bayern"],ans:2},
     {q:"Em que ano o SPFC conquistou a Copa Sul-Americana?",opts:["2010","2012","2014","2016"],ans:1},
     {q:"O São Paulo ganhou a Copa do Brasil de 1992 contra quem?",opts:["Corinthians","Flamengo","Internacional","Grêmio"],ans:0},
-    {q:"Na primeira Libertadores do SPFC (1992), quem foi o rival na final?",opts:["Newell's Old Boys","River Plate","Boca Juniors","Nacional"],ans:0},
-    {q:"Em 1993, quem foi o rival do SPFC na final da Libertadores?",opts:["Universidad de Chile","Universitario","Junior Barranquilla","Católica"],ans:2},
+    {q:"Na Libertadores de 1992, quem foi o rival na final?",opts:["Newell's Old Boys","River Plate","Boca Juniors","Nacional"],ans:0},
+    {q:"Na Libertadores de 1993, quem foi o rival na final?",opts:["U. de Chile","Universitario","Junior Barranquilla","Católica"],ans:2},
     {q:"Qual posição o São Paulo ocupa entre os maiores campeões nacionais?",opts:["1º","2º","3º","4º"],ans:0},
-    {q:"O SPFC foi campeão brasileiro invicto em qual ano?",opts:["1977","1986","1992","2006"],ans:3}
+    {q:"Quantas Libertadores o São Paulo FC conquistou no total?",opts:["1","2","3","4"],ans:2}
   ],
-  curiosidades: [
-    {q:"Qual é a alcunha do São Paulo FC nas transmissões esportivas?",opts:["Tricolor Paulista","Soberano","Gigante do Morumbi","Todas as anteriores"],ans:3},
+  curiosidades:[
+    {q:"Qual é a alcunha do São Paulo FC nas transmissões?",opts:["Tricolor Paulista","Soberano","Gigante do Morumbi","Todas as anteriores"],ans:3},
     {q:"O uniforme titular do SPFC tem listras de quais cores?",opts:["Branco e preto","Vermelho, branco e preto","Vermelho e branco","Preto e branco"],ans:1},
-    {q:"Qual apelido é dado ao clássico entre SPFC e Corinthians?",opts:["Clássico da Saudade","Majestoso","Derby Paulista","Clássico do Povo"],ans:1},
-    {q:"Qual ex-jogador do SPFC virou treinador e ganhou a Libertadores de 2024?",opts:["Artur Jorge","Renato Gaúcho","Tite","Cuca"],ans:0},
+    {q:"Qual apelido é dado ao clássico SPFC x Corinthians?",opts:["Clássico da Saudade","Majestoso","Derby Paulista","Clássico do Povo"],ans:1},
+    {q:"Qual ex-jogador do SPFC ganhou a Libertadores de 2024 como treinador?",opts:["Artur Jorge","Renato Gaúcho","Tite","Cuca"],ans:0},
     {q:"O São Paulo tem quantos títulos mundiais?",opts:["1","2","3","4"],ans:2},
-    {q:"Qual empresa patrocinou o SPFC por muitos anos com logo no centro da camisa?",opts:["Reebok","Penalty","Adidas","Rexona"],ans:3},
+    {q:"Qual empresa patrocinou o SPFC com logo no centro da camisa?",opts:["Reebok","Penalty","Adidas","Rexona"],ans:3},
     {q:"Qual jogador usou a camisa 7 do SPFC e é lembrado pelos dribles?",opts:["Zetti","Josimar","Müller","Palhinha"],ans:2},
     {q:"O São Paulo disputou o Mundial de 2005 representando qual continente?",opts:["América do Norte","América do Sul","Europa","África"],ans:1},
-    {q:"Qual cantor sertanejo é torcedor declarado do SPFC?",opts:["Gusttavo Lima","Zezé Di Camargo","Luan Santana","Michel Teló"],ans:1},
-    {q:"Como é chamado o clássico entre SPFC e Santos?",opts:["Majestoso","Clássico da Saudade","Derby do Interior","Rei da América"],ans:1}
+    {q:"Como é chamado o clássico entre SPFC e Santos?",opts:["Majestoso","Clássico da Saudade","Derby do Interior","Rei da América"],ans:1},
+    {q:"Qual cantor sertanejo é torcedor declarado do SPFC?",opts:["Gusttavo Lima","Zezé Di Camargo","Luan Santana","Michel Teló"],ans:1}
   ]
 };
 
-const PRIZE_VALUES = ["R$ 1.000","R$ 2.000","R$ 3.000","R$ 5.000","R$ 10.000","R$ 20.000","R$ 30.000","R$ 50.000","R$ 100.000","R$ 150.000","R$ 300.000","R$ 500.000","R$ 1.000.000"];
+const PRIZES=["R$ 1.000","R$ 2.000","R$ 3.000","R$ 5.000","R$ 10.000","R$ 20.000","R$ 30.000","R$ 50.000","R$ 100.000","R$ 150.000","R$ 300.000","R$ 500.000","R$ 1.000.000"];
 
-// ═══════════════════════════════════════════════
-// ESTADO
-// ═══════════════════════════════════════════════
-let currentUser = null;
-let quizState = null;
-let voiceEnabled = false;
-let pendingAnswer = null;
-const synth = window.speechSynthesis;
+// ── STATE ─────────────────────────────────────────────────────
+let me=null,qs=null,voiceOn=false,pending=null;
+const synth=window.speechSynthesis;
 
-// ═══════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════
-function showRegister(){document.getElementById('welcome-form').style.display='none';document.getElementById('register-form').style.display='block';}
-function showLogin(){document.getElementById('welcome-form').style.display='block';document.getElementById('register-form').style.display='none';}
+// ── AUTH ──────────────────────────────────────────────────────
+function showRegister(){$('welcome-form').style.display='none';$('register-form').style.display='block';}
+function showLogin(){$('welcome-form').style.display='block';$('register-form').style.display='none';}
 
 async function doLogin(){
-  const u=document.getElementById('username-input').value.trim();
-  const p=document.getElementById('password-input').value;
-  if(!u||!p){showAuthError('Preencha todos os campos!');return;}
+  const u=$('username-input').value.trim(),p=$('password-input').value;
+  if(!u||!p){err('Preencha todos os campos!');return;}
   try{
-    const user=await fbGetUser(u);
-    if(!user||user.password!==btoa(p)){showAuthError('Usuário ou senha incorretos!');return;}
-    currentUser={name:u,...user};
-    enterHome();
-  }catch(e){showAuthError('Erro de conexão. Tente novamente.');}
+    const user=await fbUser(u);
+    if(!user||user.password!==btoa(p)){err('Usuário ou senha incorretos!');return;}
+    me={name:u,...user};home();
+  }catch{err('Erro de conexão. Tente novamente.');}
 }
 
 async function doRegister(){
-  const u=document.getElementById('reg-username').value.trim();
-  const p=document.getElementById('reg-password').value;
-  const c=document.getElementById('reg-confirm').value;
-  if(!u||!p||!c){showAuthError('Preencha todos os campos!');return;}
-  if(p!==c){showAuthError('Senhas não conferem!');return;}
-  if(u.length<3){showAuthError('Nome precisa ter ao menos 3 caracteres!');return;}
+  const u=$('reg-username').value.trim(),p=$('reg-password').value,c=$('reg-confirm').value;
+  if(!u||!p||!c){err('Preencha todos os campos!');return;}
+  if(p!==c){err('Senhas não conferem!');return;}
+  if(u.length<3){err('Nome precisa ter ao menos 3 caracteres!');return;}
   try{
-    const existing=await fbGetUser(u);
-    if(existing){showAuthError('Usuário já existe!');return;}
-    const data={password:btoa(p),totalScore:0,gamesPlayed:0,createdAt:Date.now()};
-    await fbSaveUser(u,data);
-    currentUser={name:u,...data};
-    enterHome();
-  }catch(e){showAuthError('Erro ao criar conta. Tente novamente.');}
+    if(await fbUser(u)){err('Usuário já existe!');return;}
+    const d={password:btoa(p),totalScore:0,gamesPlayed:0,createdAt:Date.now()};
+    await fbSaveUser(u,d);me={name:u,...d};home();
+  }catch{err('Erro ao criar conta.');}
 }
 
-function showAuthError(msg){const el=document.getElementById('auth-error');el.textContent=msg;setTimeout(()=>el.textContent='',3500);}
-function doLogout(){currentUser=null;stopSpeech();showScreen('screen-welcome');}
+function err(m){const e=$('auth-error');e.textContent=m;setTimeout(()=>e.textContent='',3500);}
+function doLogout(){me=null;stopSpeech();stopLoop();$('music-ctrl').style.display='none';show('screen-welcome');}
 
-async function updateUserScore(score){
+async function updateScore(s){
   try{
-    const user=await fbGetUser(currentUser.name);
-    if(!user)return;
-    const newTotal=(user.totalScore||0)+score;
-    const newGames=(user.gamesPlayed||0)+1;
-    await fbSaveUser(currentUser.name,{...user,totalScore:newTotal,gamesPlayed:newGames});
-    currentUser.totalScore=newTotal;
-    document.getElementById('user-score-display').textContent='💰 '+newTotal.toLocaleString()+' pts';
+    const u=await fbUser(me.name);if(!u)return;
+    const nt=(u.totalScore||0)+s,ng=(u.gamesPlayed||0)+1;
+    await fbSaveUser(me.name,{...u,totalScore:nt,gamesPlayed:ng});
+    me.totalScore=nt;$('user-score-display').textContent='💰 '+nt.toLocaleString()+' pts';
   }catch{}
 }
 
-// ═══════════════════════════════════════════════
-// NAVEGAÇÃO
-// ═══════════════════════════════════════════════
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+// ── NAV ───────────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
 
-function enterHome(){
-  showScreen('screen-home');
-  document.getElementById('user-display').textContent=currentUser.name;
-  document.getElementById('user-score-display').textContent='💰 '+(currentUser.totalScore||0).toLocaleString()+' pts';
-  showTab('jogar',document.getElementById('nav-jogar'));
+function home(){
+  show('screen-home');
+  $('user-display').textContent=me.name;
+  $('user-score-display').textContent='💰 '+(me.totalScore||0).toLocaleString()+' pts';
+  showTab('jogar',$('nav-jogar'));
+  $('music-ctrl').style.display='flex';
+  musicOn=true;ostPhase=0;getCtx().resume();startOST();
 }
 
 function showTab(tab,btn){
   document.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
-  document.getElementById('tab-'+tab).style.display='block';
+  $('tab-'+tab).style.display='block';
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
   if(tab==='ranking')loadRanking();
 }
 
-function goHome(){enterHome();}
-function showRankingTab(){enterHome();setTimeout(()=>showTab('ranking',document.getElementById('nav-ranking')),100);}
+function goHome(){stopSpeech();setPhase(0);home();}
+function showRankingTab(){goHome();setTimeout(()=>showTab('ranking',$('nav-ranking')),120);}
 
-// ═══════════════════════════════════════════════
-// RANKING GLOBAL (Firebase)
-// ═══════════════════════════════════════════════
+// ── RANKING ───────────────────────────────────────────────────
 async function loadRanking(){
-  const list=document.getElementById('ranking-list');
-  list.innerHTML='<p class="text-center text-muted">Carregando ranking global...</p>';
+  const list=$('ranking-list');
+  list.innerHTML='<p class="text-center text-muted">Carregando...</p>';
   try{
-    const rows=await fbGetRanking();
+    const rows=await fbRanking();
     if(!rows.length){list.innerHTML='<p class="text-center text-muted">Nenhum jogador ainda. Seja o primeiro!</p>';return;}
     list.innerHTML=rows.map((r,i)=>{
       const pc=i===0?'rp-gold':i===1?'rp-silver':i===2?'rp-bronze':'rp-other';
       const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
-      return`<div class="rank-item">
-        <div class="rank-pos ${pc}">${m}</div>
-        <div style="flex:1">
-          <div class="rank-name">${r.name}</div>
-          <div class="rank-cat">${r.category} · ${r.correct} acertos</div>
-        </div>
-        <div class="rank-score">${(r.score||0).toLocaleString()}</div>
-      </div>`;
+      return`<div class="rank-item"><div class="rank-pos ${pc}">${m}</div><div style="flex:1"><div class="rank-name">${r.name}</div><div class="rank-cat">${r.category} · ${r.correct} acertos</div></div><div class="rank-score">${(r.score||0).toLocaleString()}</div></div>`;
     }).join('');
-  }catch(e){list.innerHTML='<p class="text-center text-red text-sm">Erro ao carregar ranking. Verifique a conexão.</p>';}
+  }catch{list.innerHTML='<p class="text-center text-red text-sm">Erro ao carregar ranking. Verifique as regras do Firebase.</p>';}
 }
 
-// ═══════════════════════════════════════════════
-// QUIZ
-// ═══════════════════════════════════════════════
-function startQuiz(category){
-  let qs=[],catLabel='';
-  if(category==='all'){
-    Object.entries(QUESTIONS).forEach(([k,v])=>{
-      [...v].sort(()=>Math.random()-.5).slice(0,5).forEach(q=>qs.push({...q,category:k}));
-    });
-    qs.sort(()=>Math.random()-.5);
-    catLabel='⚡ Modo Completo';
+// ── QUIZ ──────────────────────────────────────────────────────
+function startQuiz(cat){
+  let questions=[],label='';
+  if(cat==='all'){
+    Object.entries(Q).forEach(([k,v])=>[...v].sort(()=>Math.random()-.5).slice(0,5).forEach(q=>questions.push({...q,cat:k})));
+    questions.sort(()=>Math.random()-.5);label='⚡ Modo Completo';
   }else{
-    qs=[...QUESTIONS[category]].sort(()=>Math.random()-.5).slice(0,10).map(q=>({...q,category}));
-    catLabel=getCatLabel(category);
+    questions=[...Q[cat]].sort(()=>Math.random()-.5).slice(0,10).map(q=>({...q,cat}));
+    label=catLabel(cat);
   }
-  quizState={questions:qs,current:0,score:0,correct:0,category:category==='all'?'Modo Completo':catLabel,lifelines:{skip:true,eliminate:true,ai:true},selectedOpt:null,eliminated:[]};
-  buildPrizeLadder(qs.length);
-  document.getElementById('quiz-category-label').textContent=catLabel;
-  showScreen('screen-quiz');
-  renderQuestion();
+  qs={questions,cur:0,score:0,correct:0,category:cat==='all'?'Modo Completo':label,ll:{skip:true,elim:true,ai:true},elim:[]};
+  buildLadder(questions.length);
+  $('quiz-cat-label').textContent=label;
+  show('screen-quiz');
+  setPhase(0);
+  renderQ();
 }
 
-function getCatLabel(c){return{historia:'📜 História',craques:'⚽ Craques',estadio:'🏟️ Estádio',titulos:'🏆 Títulos',curiosidades:'🔴 Curiosidades'}[c]||c;}
+function catLabel(c){return{historia:'📜 História',craques:'⚽ Craques',estadio:'🏟️ Estádio',titulos:'🏆 Títulos',curiosidades:'🔴 Curiosidades'}[c]||c;}
 
-function buildPrizeLadder(total){
-  document.getElementById('prize-ladder').innerHTML=PRIZE_VALUES.slice(0,total).map((v,i)=>`<div class="prize-item" id="prize-${i}"><span class="prize-num">${i+1}.</span><span>${v}</span></div>`).join('');
+function buildLadder(n){
+  $('prize-ladder').innerHTML=PRIZES.slice(0,n).map((v,i)=>`<div class="prize-item" id="p${i}"><span class="prize-num">${i+1}.</span><span>${v}</span></div>`).join('');
   updateLadder();
 }
 
 function updateLadder(){
+  const{cur,questions}=qs;
   document.querySelectorAll('.prize-item').forEach((el,i)=>{
     el.classList.remove('current','reached');
-    if(i===quizState.current)el.classList.add('current');
-    else if(i<quizState.current)el.classList.add('reached');
+    if(i===cur)el.classList.add('current');
+    else if(i<cur)el.classList.add('reached');
   });
+  const pct=cur/questions.length;
+  setPhase(pct<0.4?0:pct<0.7?1:2);
 }
 
-function renderQuestion(){
-  const{questions,current,lifelines}=quizState;
-  const q=questions[current];
-  quizState.selectedOpt=null;quizState.eliminated=[];pendingAnswer=null;
-  document.getElementById('q-category-text').textContent=getCatLabel(q.category);
-  document.getElementById('q-number-text').textContent=`${current+1} / ${questions.length}`;
-  document.getElementById('question-text').textContent=q.q;
-  document.getElementById('ai-help-box').style.display='none';
-  const letters=['A','B','C','D'];
-  document.getElementById('options-grid').innerHTML=q.opts.map((opt,i)=>`<button class="option-btn" id="opt-${i}" onclick="selectOption(${i})"><span class="opt-letter">${letters[i]}</span><span>${opt}</span></button>`).join('');
-  document.getElementById('ll-skip').disabled=!lifelines.skip;
-  document.getElementById('ll-eliminate').disabled=!lifelines.eliminate;
-  document.getElementById('ll-ai').disabled=!lifelines.ai;
+function renderQ(){
+  const{questions,cur,ll}=qs;
+  const q=questions[cur];
+  qs.elim=[];pending=null;
+  $('q-cat').textContent=catLabel(q.cat);
+  $('q-num').textContent=`${cur+1} / ${questions.length}`;
+  $('q-text').textContent=q.q;
+  $('ai-box').style.display='none';
+  const L=['A','B','C','D'];
+  $('opts-grid').innerHTML=q.opts.map((o,i)=>`<button class="option-btn" id="o${i}" onclick="pick(${i})"><span class="opt-letter">${L[i]}</span><span>${o}</span></button>`).join('');
+  $('ll-skip').disabled=!ll.skip;
+  $('ll-eliminate').disabled=!ll.elim;
+  $('ll-ai').disabled=!ll.ai;
   updateLadder();
-  if(voiceEnabled)speakQuestion(q.q);
+  if(voiceOn)speak(q.q);
 }
 
-function selectOption(idx){
-  if(quizState.eliminated.includes(idx))return;
-  quizState.selectedOpt=idx;pendingAnswer=idx;
-  document.querySelectorAll('.option-btn').forEach((b,i)=>{b.classList.remove('selected');if(i===idx)b.classList.add('selected');});
-  document.getElementById('confirm-overlay').style.display='flex';
-  document.getElementById('confirm-answer-text').textContent='Sua resposta: '+quizState.questions[quizState.current].opts[idx];
+function pick(i){
+  if(qs.elim.includes(i))return;
+  pending=i;
+  document.querySelectorAll('.option-btn').forEach((b,j)=>{b.classList.remove('selected');if(j===i)b.classList.add('selected');});
+  $('confirm-overlay').style.display='flex';
+  $('confirm-txt').textContent='Sua resposta: '+qs.questions[qs.cur].opts[i];
 }
 
 function cancelConfirm(){
-  document.getElementById('confirm-overlay').style.display='none';
+  $('confirm-overlay').style.display='none';
   document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
-  quizState.selectedOpt=null;pendingAnswer=null;
+  pending=null;
 }
 
-function finalConfirm(){document.getElementById('confirm-overlay').style.display='none';processAnswer(pendingAnswer);}
+function finalConfirm(){$('confirm-overlay').style.display='none';answer(pending);}
 
-function processAnswer(idx){
-  const{questions,current}=quizState;
-  const q=questions[current];
-  const isCorrect=idx===q.ans;
-  document.querySelectorAll('.option-btn').forEach((b,i)=>{
+function answer(i){
+  const q=qs.questions[qs.cur],ok=i===q.ans;
+  document.querySelectorAll('.option-btn').forEach((b,j)=>{
     b.disabled=true;
-    if(i===q.ans)b.classList.add('correct');
-    if(i===idx&&!isCorrect)b.classList.add('wrong');
+    if(j===q.ans)b.classList.add('correct');
+    if(j===i&&!ok)b.classList.add('wrong');
   });
-  if(isCorrect){quizState.correct++;quizState.score+=(current+1)*1000;playSound('correct');setTimeout(nextQuestion,2000);}
-  else{playSound('wrong');setTimeout(endQuiz,2000);}
+  if(ok){qs.correct++;qs.score+=(qs.cur+1)*1000;playFanfare();setTimeout(next,2000);}
+  else{playWrong();setTimeout(endGame,2200);}
 }
 
-function nextQuestion(){quizState.current++;if(quizState.current>=quizState.questions.length)endQuiz();else renderQuestion();}
+function next(){qs.cur++;if(qs.cur>=qs.questions.length)endGame();else renderQ();}
 
-async function endQuiz(){
-  const{score,correct,category,questions}=quizState;
-  stopSpeech();
-  await updateUserScore(score);
-  try{
-    await fbAddScore({name:currentUser.name,score,correct,category,date:Date.now()});
-    const pos=await fbGetRankPosition(score);
-    document.getElementById('result-rank').textContent='#'+pos;
-  }catch{document.getElementById('result-rank').textContent='—';}
-  document.getElementById('result-score').textContent=score.toLocaleString();
-  document.getElementById('result-correct').textContent=`${correct} / ${questions.length}`;
-  document.getElementById('result-total').textContent=(currentUser.totalScore||0).toLocaleString();
+async function endGame(){
+  const{score,correct,category,questions}=qs;
+  stopSpeech();setPhase(0);
+  await updateScore(score);
+  try{await fbAddScore({name:me.name,score,correct,category,date:Date.now()});const pos=await fbRankPos(score);$('res-rank').textContent='#'+pos;}
+  catch{$('res-rank').textContent='—';}
+  $('res-score').textContent=score.toLocaleString();
+  $('res-correct').textContent=`${correct} / ${questions.length}`;
+  $('res-total').textContent=(me.totalScore||0).toLocaleString();
   const pct=correct/questions.length;
   let msg='',trophy='🎽';
   if(pct>=0.8){msg='🔴 Você é um Tricolor raiz! Parabéns!';trophy='🏆';}
-  else if(pct>=0.5){msg='⚽ Bom! Mas dá pra estudar mais sobre o SPFC!';trophy='👏';}
-  else{msg='😅 Vai ao Morumbi mais vezes e tente de novo!';}
-  document.getElementById('result-msg').textContent=msg;
-  document.getElementById('result-trophy').textContent=trophy;
-  showScreen('screen-result');
+  else if(pct>=0.5){msg='⚽ Bom! Estude mais e tente de novo!';trophy='👏';}
+  else{msg='😅 Vai ao Morumbi mais vezes!';}
+  $('res-msg').textContent=msg;$('res-trophy').textContent=trophy;
+  show('screen-result');
 }
 
-function quitQuiz(){stopSpeech();goHome();}
+function quitQuiz(){stopSpeech();setPhase(0);goHome();}
 
-// ═══════════════════════════════════════════════
-// LIFELINES
-// ═══════════════════════════════════════════════
-function useSkip(){if(!quizState.lifelines.skip)return;quizState.lifelines.skip=false;document.getElementById('ll-skip').disabled=true;nextQuestion();}
-
+// ── LIFELINES ─────────────────────────────────────────────────
+function useSkip(){if(!qs.ll.skip)return;qs.ll.skip=false;$('ll-skip').disabled=true;next();}
 function useEliminate(){
-  if(!quizState.lifelines.eliminate)return;
-  quizState.lifelines.eliminate=false;document.getElementById('ll-eliminate').disabled=true;
-  const wrong=[0,1,2,3].filter(i=>i!==quizState.questions[quizState.current].ans).sort(()=>Math.random()-.5).slice(0,2);
-  quizState.eliminated=wrong;
-  wrong.forEach(i=>document.getElementById('opt-'+i)?.classList.add('eliminated'));
+  if(!qs.ll.elim)return;qs.ll.elim=false;$('ll-eliminate').disabled=true;
+  const wrong=[0,1,2,3].filter(i=>i!==qs.questions[qs.cur].ans).sort(()=>Math.random()-.5).slice(0,2);
+  qs.elim=wrong;wrong.forEach(i=>$('o'+i)?.classList.add('eliminated'));
 }
-
 async function useAIHelp(){
-  if(!quizState.lifelines.ai)return;
-  quizState.lifelines.ai=false;document.getElementById('ll-ai').disabled=true;
-  const q=quizState.questions[quizState.current];
-  const box=document.getElementById('ai-help-box');
+  if(!qs.ll.ai)return;qs.ll.ai=false;$('ll-ai').disabled=true;
+  const q=qs.questions[qs.cur],box=$('ai-box');
   box.style.display='block';box.textContent='🤖 A IA está pensando...';
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Você é especialista do São Paulo FC. Dê uma dica sutil sem revelar a resposta:\n\nPergunta: ${q.q}\nOpções: ${q.opts.join(', ')}\n\nResponda em no máximo 2 frases em português.`}]})});
-    const d=await r.json();
-    box.textContent='🤖 '+(d.content?.[0]?.text||'Pense na história gloriosa do SPFC!');
-  }catch{box.textContent='🤖 Dica: pense na história e nos grandes momentos do Tricolor!';}
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Especialista SPFC. Dica sutil sem revelar a resposta:\n\nPergunta: ${q.q}\nOpções: ${q.opts.join(', ')}\n\nMáximo 2 frases em português.`}]})});
+    const d=await r.json();box.textContent='🤖 '+(d.content?.[0]?.text||'Pense nos grandes momentos do Tricolor!');
+  }catch{box.textContent='🤖 Dica: pense na história gloriosa do SPFC!';}
 }
 
-// ═══════════════════════════════════════════════
-// VOZ
-// ═══════════════════════════════════════════════
+// ── VOZ ───────────────────────────────────────────────────────
 function toggleVoice(){
-  voiceEnabled=!voiceEnabled;
-  const btn=document.getElementById('ll-voice');
-  btn.style.borderColor=voiceEnabled?'#FFD700':'#555';
-  btn.style.color=voiceEnabled?'#FFD700':'#ccc';
-  if(!voiceEnabled)stopSpeech();
+  voiceOn=!voiceOn;
+  const b=$('ll-voice');b.style.borderColor=voiceOn?'#FFD700':'#555';b.style.color=voiceOn?'#FFD700':'#ccc';
+  if(!voiceOn)stopSpeech();
 }
-function speakQuestion(text){
-  if(!synth)return;stopSpeech();
-  const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';u.rate=0.9;
-  document.getElementById('speaking-indicator').style.display='flex';
-  u.onend=()=>document.getElementById('speaking-indicator').style.display='none';
-  synth.speak(u); 
-}
-function stopSpeech(){if(synth)synth.cancel();const el=document.getElementById('speaking-indicator');if(el)el.style.display='none';}
+function speak(t){if(!synth)return;stopSpeech();const u=new SpeechSynthesisUtterance(t);u.lang='pt-BR';u.rate=0.9;$('speaking-indicator').style.display='flex';u.onend=()=>$('speaking-indicator').style.display='none';synth.speak(u);}
+function stopSpeech(){if(synth)synth.cancel();const e=$('speaking-indicator');if(e)e.style.display='none';}
 
-// ═══════════════════════════════════════════════
-// SOM
-// ═══════════════════════════════════════════════
-function playSound(type){
-  try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    if(type==='correct'){
-      [523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';const t=ctx.currentTime+i*.15;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3);});
-    }else{
-      const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=200;o.type='sawtooth';g.gain.setValueAtTime(.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.5);o.start();o.stop(ctx.currentTime+.5);
-    }
-  }catch{}
-}
-
-window.onload=()=>showScreen('screen-welcome');
+window.onload=()=>show('screen-welcome');
 </script>
 </body>
 </html>
